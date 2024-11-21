@@ -19,11 +19,20 @@ const PORT = 7777;
 // where as app.get will only match HTTP:GET method
 
 app.get("/user", (req, res) => {
+  console.log(req.query);
+  res.send({ firstName: "aqeel", lastName: "ahmad" });
+});
+app.get("/user/:userId", (req, res) => {
+  console.log(req.params);
+  res.send({ firstName: "aqeel", lastName: "ahmad" });
+});
+
+app.get("/user/:userId/:pwd", (req, res) => {
+  console.log(req.params);
   res.send({ firstName: "aqeel", lastName: "ahmad" });
 });
 
 app.post("/user", (req, res) => {
-  console.log("save the data to database");
   res.send("successfully saved");
 });
 
@@ -38,3 +47,8 @@ app.use("/test", (req, res) => {
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`);
 });
+
+// /ab?c  => /abc , /ac
+// /ab+c  => /abbc, /abbbc, /abbbbc etc
+// /ab*cd  => /abcd, /abahmadcd, /abrcd -> anything between works
+// /a(bc)?d  => /abcd, /ad
