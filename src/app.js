@@ -1,21 +1,19 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./middlewares/auth");
 const app = express();
 
 const PORT = 7777;
-app.use("/admin", adminAuth);
 
 app.get("/admin/getAllData", (req, res) => {
+  // try{
+  throw new Error("");
   res.send("all data sent");
+  // }
+  // catch(error){
+  //  res.status(500).send("Something went wrong.");
+  // }
 });
 
-app.get("/user/login", (req, res) => {
-  res.send("Please login");
-});
-
-app.get("/user/role", userAuth, (req, res) => {
-  res.send("user data");
-});
+app.use("/", (err, req, res, next) => {});
 
 app.listen(PORT, () => {
   console.log(`server is listening on ${PORT}`);
