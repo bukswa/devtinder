@@ -14,10 +14,10 @@ app.post("/signup", async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
+    res.send("User added successfully");
   } catch (error) {
-    res.status(400).send("Bad Request");
+    res.status(400).send("Bad Request: " + error);
   }
-  res.send("User added successfully");
 });
 
 // Get a user
@@ -50,17 +50,21 @@ app.patch("/user/:userId", async (req, res) => {
   try {
     const userId = req.params?.userId;
     const data = req.body;
-    const isUpdateAllowed =
-      data?.keys?.every((item) => {
-        return ALLOWED_FIELDS.includes(item);
-      }) || data.skills.length < 10;
+    console.log({ data });
+    let isUpdateAllowed = !!Object.keys(data).every((item) => {
+      return ALLOWED_FIELDS.includes(item);
+    });
+
+    if (data?.skills) {
+      isUpdateAllowed = data.skills.length < 10;
+    }
     if (!isUpdateAllowed) {
       throw new Error("Update not allowed");
     }
     const user = await User.findByIdAndUpdate(userId, data, {
       returnOriginal: true,
     });
-    console.log(user);
+
     res.send("User updated successfully");
   } catch (error) {
     res.status(400).send("Update failed: " + error);
