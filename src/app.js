@@ -5,6 +5,7 @@ const app = express();
 const connnectDB = require("./config/database");
 const User = require("./models/user");
 const PORT = 7777;
+const ALLOWED_FIELDS = ["photoUrl", "age", "gender", "skills", "about"];
 
 // Middleware for parsing all the req, res json object
 app.use(express.json());
@@ -45,20 +46,24 @@ app.delete("/user", async (req, res) => {
 });
 
 // Update the user
-app.patch("/user", async (req, res) => {
+app.patch("/user/:userId", async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        emailId: req.body.emailId,
-      },
-      { returnOriginal: true }
-    );
+    const userId = req.params?.userId;
+    const data = req.body;
+    const isUpdateAllowed =
+      data?.keys?.every((item) => {
+        return ALLOWED_FIELDS.includes(item);
+      }) || data.skills.length < 10;
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    const user = await User.findByIdAndUpdate(userId, data, {
+      returnOriginal: true,
+    });
     console.log(user);
     res.send("User updated successfully");
   } catch (error) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send("Update failed: " + error);
   }
 });
 // Feed api- GET /feed
