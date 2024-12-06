@@ -37,6 +37,8 @@ const userSchema = new mongoose.Schema(
     about: { type: String, default: "This is default value" },
     photoUrl: {
       type: String,
+      default:
+        "https://www.google.co.in/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png",
       validate(value) {
         if (!validator.isURL(value)) {
           throw new Error("Not a valid url: " + value);
